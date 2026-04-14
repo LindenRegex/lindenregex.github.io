@@ -53,8 +53,7 @@ h5, h6
 
 
 a, a:hover
-{ outline: none;
-  text-decoration: underline;
+{ text-decoration: underline;
   color: #684551;}
 
 a:hover
