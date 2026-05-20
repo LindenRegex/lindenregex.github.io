@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Linden regex explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inria+Sans:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Iosevka/11.1.1/iosevka/iosevka.min.css" integrity="sha512-3hU20586NsplKRzjf2jQN5vTRTI2EsXObrHDOBLGdkiRkneg699BlmBXWGHHFHADCF3TOk2BREsVy7qTkmvQqQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Linden regex explorer</h1>
+
+    <div id="console">
+      <code class="line">
+        <span class="prompt">&gt;&gt;</span>
+        <span class="lead">s = </span>
+        <input type="checkbox" id="raw">
+        <label for="raw">String.raw</label>
+        <span class="lead">`</span>
+        <textarea id="string" rows="1" spellcheck="false" autocapitalize="off">abc</textarea>
+        <span class="lead">`</span>
+      </code>
+      <samp id="string-error"></samp>
+      <code class="line">
+        <span class="prompt">&gt;&gt;</span>
+        <span class="lead">r = </span>
+        <span class="delim-rx">/</span>
+        <textarea id="regex" rows="1" spellcheck="false" autocapitalize="off">(?:a|(?:a(b)|a))bc</textarea>
+        <span class="delim-rx">/</span>
+        <span id="regex-flags">
+          <input type="checkbox" id="flag-hasIndices" title="hasIndices" data-str="d">
+          <label hidden for="flag-hasIndices" title="hasIndices">d</label>
+          <input type="checkbox" id="flag-global" title="global" data-str="g">
+          <label hidden for="flag-global" title="global">g</label>
+          <input type="checkbox" id="flag-ignoreCase" title="ignoreCase" data-str="i">
+          <label for="flag-ignoreCase" title="ignoreCase">i</label>
+          <input type="checkbox" id="flag-multiline" title="multiline" data-str="m">
+          <label for="flag-multiline" title="multiline">m</label>
+          <input type="checkbox" id="flag-dotAll" title="dotAll" data-str="s">
+          <label for="flag-dotAll" title="dotAll">s</label>
+          <input type="checkbox" id="flag-unicode" title="unicode" data-str="u">
+          <label hidden for="flag-unicode" title="unicode">u</label>
+          <input type="checkbox" id="flag-unicodeSets" title="unicodeSets" data-str="v">
+          <label hidden for="flag-unicodeSets" title="unicodeSets">v</label>
+          <input type="checkbox" id="flag-sticky" title="sticky" data-str="y" checked>
+          <label for="flag-sticky" title="sticky">y</label>
+          <input type="checkbox" id="flag-linear" data-str="l" data-skip>
+          <label for="flag-linear" title="linear">l</label>
+        </span>
+      </code>
+      <samp id="regex-error"></samp>
+      <samp id="regex-view"></samp>
+      <code class="line">
+        <span class="prompt">&gt;&gt;</span>
+        <span id="sticky-prefix">
+          <span class="lead">r.lastIndex = </span>
+          <input id="last-index" type="number" min="0" value="0" />
+          <span class="lead">; </span>
+        </span>
+        <span class="lead">r.exec(s)</span>
+      </code>
+      <samp id="exec-result"></samp>
+    </div>
+
+    <div id="panes">
+      <div id="tree"></div>
+      <div id="state"></div>
+      <div id="step">
+        <button id="step-stop" title="Deselect">⊘</button>
+        <button id="step-back" title="Previous">←</button>
+        <button id="step-fwd" title="Next">→</button>
+      </div>
+    </div>
+
+    <footer>
+      <a href="https://lindenregex.github.io/" target="_blank">Linden: towards a formally verified, linear-time, efficient engine for JavaScript regexes</a>
+    </footer>
+
+    <script src="./linden-viz.js"></script>
+  </body>
+</html>
