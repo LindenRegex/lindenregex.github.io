@@ -53,6 +53,7 @@
     --c-muted: #79828f;
     --c-border: #3a3f4a;
     --c-out: #aab2bf;
+    --c-highlight: royalblue;
   }
 }
 
@@ -83,7 +84,7 @@ h1 { font-size: larger; margin: 0; }
 
 code, kbd, samp, pre { font-family: var(--mono); }
 
-textarea, input, button { font: inherit; }
+textarea, input, button { font: inherit; color: inherit; }
 
 label[for], button {
   cursor: pointer;
@@ -188,7 +189,6 @@ label[for] {
   &.subregex { background: var(--c-highlight); }
   sub {
       bottom: -0.5em;
-      color: var(--c-muted);
       font-family: var(--sans);
       margin-right: 0.1em;
       position: relative;
@@ -276,9 +276,6 @@ label[for] {
   stroke-width: var(--stroke-thin);
   &.subregex { stroke: color-mix(in srgb, var(--c-subregex), var(--c-bg) var(--dim, 0%)); stroke-width: var(--stroke-medium); }
 }
-.tedge[data-has-ghost] {
-    stroke-dasharray: 5 4;
-}
 
 .tnode {
   --bg: var(--c-node-bg);
@@ -302,10 +299,23 @@ label[for] {
 
   &[data-kind="Start"] { --bg: var(--c-start-bg); --fg: var(--c-start-fg); --stroke: var(--c-start-stroke); }
   &[data-kind="Choice"] { --bg: var(--c-choice-bg); --fg: var(--c-choice-fg); --stroke: var(--c-choice-stroke); }
-  &[data-status="Match"] { --bg: var(--c-ok-bg); --fg: var(--c-ok-fg); --stroke: var(--c-ok-stroke); }
-  &[data-status="Mismatch"] { --bg: var(--c-fail-bg); --fg: var(--c-fail-fg); --stroke: var(--c-fail-stroke); }
+  &[data-status="Match"][data-ghost-depth="0"] { --bg: var(--c-ok-bg); --fg: var(--c-ok-fg); --stroke: var(--c-ok-stroke); }
+  &[data-status="Mismatch"][data-ghost-depth="0"] { --bg: var(--c-fail-bg); --fg: var(--c-fail-fg); --stroke: var(--c-fail-stroke); }
 
   &.subregex > :first-child { stroke: var(--c-subregex); stroke-width: var(--stroke-medium); }
+}
+
+:is(.tedge, .tnode):not([data-ghost-depth="0"]) {
+  &[data-ghost-depth="1"] { --dash-gap: 1; }
+  &[data-ghost-depth="2"] { --dash-gap: 2; }
+  &[data-ghost-depth="3"] { --dash-gap: 3; }
+  &[data-ghost-depth="4"] { --dash-gap: 4; }
+  &[data-ghost-depth="5"] { --dash-gap: 5; }
+  &[data-ghost-depth="6"] { --dash-gap: 6; }
+  &[data-ghost-depth="7"] { --dash-gap: 7; }
+  &[data-ghost-depth="8"] { --dash-gap: 8; }
+  &[data-ghost-depth="9"] { --dash-gap: 9; }
+  stroke-dasharray: 4 calc(2 + 3 * (var(--dash-gap) - 1));
 }
 
 #panes:not(:has(.tnode.hover)) .tnode.active > :first-child {
