@@ -1,0 +1,353 @@
+:root {
+  --mono-fonts: "IBM Plex Mono", "Iosevka Web", "Iosevka";
+
+  --sans: "Inria Sans", var(--mono-fonts), system-ui, sans-serif;
+  --mono: var(--mono-fonts), ui-monospace, monospace;
+
+  --gap: 0.5rlh;
+  --indent: 1.5rem;
+  --radius: 0.5rem;
+  --fs: 15px;
+  --stroke-thin: 1px;
+  --stroke-medium: 2px;
+  --stroke-thick: 3px;
+
+  --c-page: #e3e5e9;
+  --c-bg: #fbfcfd;
+  --c-panel: #f1f3f5;
+  --c-ink: #1f2430;
+  --c-muted: #9aa3b2;
+  --c-border: #d9dde3;
+  --c-out: #5b6472;
+  --c-regex: #b82ee5;
+  --c-string: #0074e8;
+  --c-error: #e30613;
+  --c-subregex: #d97706;
+  --c-highlight: #ffe08a;
+  --c-edge: #94a3b8;
+
+  /* Tree colors */
+  --c-node-bg: #eef1f4;
+  --c-node-fg: #334155;
+  --c-node-stroke: #64748b;
+  --c-start-bg: #475569;
+  --c-start-fg: #ffffff;
+  --c-start-stroke: #334155;
+  --c-choice-bg: #e7edf6;
+  --c-choice-fg: #27405f;
+  --c-choice-stroke: #41618c;
+  --c-ok-bg: #007380;
+  --c-ok-fg: #ffffff;
+  --c-ok-stroke: #005a63;
+  --c-fail-bg: #b51f1e;
+  --c-fail-fg: #ffffff;
+  --c-fail-stroke: #8a1818;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-page: #0c0e12;
+    --c-panel: #262a33;
+    --c-bg: #1b1e26;
+    --c-ink: #e4e7ec;
+    --c-muted: #79828f;
+    --c-border: #3a3f4a;
+    --c-out: #aab2bf;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { font-size-adjust: ex-height from-font; }
+
+html {
+    height: 100%;
+    padding: var(--gap);
+    background: var(--c-page);
+}
+
+body {
+  min-height: 100%;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: var(--gap);
+  background: var(--c-bg);
+  border-radius: var(--radius);
+  font-family: var(--sans);
+  color: var(--c-ink);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+h1 { font-size: larger; margin: 0; }
+
+code, kbd, samp, pre { font-family: var(--mono); }
+
+textarea, input, button { font: inherit; }
+
+label[for], button {
+  cursor: pointer;
+  user-select: none;
+}
+
+button {
+  background: var(--c-bg);
+  border: thin solid var(--c-border);
+  border-radius: var(--radius);
+  color: var(--c-out);
+  padding: 0;
+  text-box-edge: cap alphabetic;
+  text-box-trim: trim-both;
+}
+
+#console {
+  display: flex;
+  flex-direction: column;
+
+  textarea, input {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid var(--c-border);
+    box-sizing: content-box;
+    padding: 0;
+    cursor: text;
+    resize: none;
+    overflow: hidden;
+    flex: 0 1 auto;
+    line-height: 1.5; /* Reduce the underline-to-text distance */
+    min-width: 0;
+    margin: -0.2em 0; /* Prevent border from increasing the line height. */
+
+    &:hover, &:focus { border-bottom-color: currentColor; }
+    &:focus { outline: none; }
+  }
+}
+
+#last-index {
+    width: 2em;
+    flex: none;
+    user-select: none; /* Prevent double-click from selecting */
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+  line-height: 1.8;
+  color: var(--c-ink);
+
+  > span { flex: none; white-space: pre; }
+}
+
+samp {
+  display: block;
+  padding-left: var(--indent);
+  line-height: 1.8;
+  color: var(--c-out);
+  overflow-wrap: anywhere;
+}
+#regex-error:empty, #string-error:empty,
+#regex-error:not(:empty) + #regex-view:empty {
+    display: none;
+}
+
+.prompt {
+  width: var(--indent);
+  color: var(--c-muted);
+  user-select: none;
+  letter-spacing: -0.3em;
+}
+.delim-rx { color: var(--c-regex); }
+.delim-str { color: var(--c-string); }
+
+#regex-flags {
+  display: inline-flex;
+  color: var(--c-regex);
+
+  input { display: none; }
+  input:not(:checked) + label { color: var(--c-muted); }
+}
+
+#raw { display: none; }
+#raw:not(:checked) + label { color: var(--c-muted); }
+
+label[for] {
+  flex: none;
+}
+
+#regex { color: var(--c-regex); }
+#string { color: var(--c-string); }
+#regex.bad, #string.bad, #regex-error, #string-error { color: var(--c-error); }
+#sticky-prefix {
+  display: contents;
+  #console:has(#flag-sticky:not(:checked)) & { display: none; }
+}
+
+.rx {
+  border-radius: 0.2em;
+  &.subregex { background: var(--c-highlight); }
+  sub {
+      bottom: -0.5em;
+      color: var(--c-muted);
+      font-family: var(--sans);
+      margin-right: 0.1em;
+      position: relative;
+      vertical-align: baseline;
+  }
+}
+
+#panes {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
+  gap: var(--gap);
+  position: relative;
+}
+#tree, #state {
+  border: thin solid var(--c-border);
+  border-radius: var(--radius);
+  box-sizing: content-box;
+}
+#tree {
+  flex: 2 1 0;
+  overflow: hidden;
+  background: var(--c-bg);
+}
+
+#console:has(#flag-linear:checked) ~ #panes {
+  .tedge, .tnode:not(.active) {
+    &[data-redundant] { --dim: 80%; }
+  }
+}
+
+.tree-msg { padding: var(--gap); color: var(--c-ink); }
+.retry {
+  color: var(--c-string);
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none; /* Prevent double-click from selecting */
+}
+#state {
+  flex: 1 1 0;
+  overflow: auto;
+  padding: var(--gap);
+  background: var(--c-panel);
+  font-family: var(--mono);
+  line-height: 1.5;
+
+  &:empty::before {
+    content: "Hover tree nodes to see match states. "
+             "Hover the parsed regex to highlight subtrees.";
+    color: var(--c-muted);
+    font-family: var(--sans);
+  }
+}
+
+#step {
+  position: absolute;
+  right: var(--gap);
+  bottom: var(--gap);
+
+  button {
+    width: 2em;
+    height: 2em;
+    line-height: 0;
+  }
+}
+#panes:not(:has(.tnode.active)) #step-stop { display: none; }
+
+.st-row { white-space: pre; }
+.st-label, .st-dim { color: var(--c-muted); }
+.st-label { padding-right: 0.25em; min-width: 2em; display: inline-block; }
+.caret, .highlighted-span { padding: 0 1px; margin: 0 -1px; }
+.caret { background: var(--c-ink); }
+.highlighted-span { background: var(--c-highlight); border-radius: 0.15em; }
+
+.tree-svg {
+  display: block;
+  cursor: grab;
+  &.panning { cursor: grabbing; }
+}
+
+.tedge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--c-edge), var(--c-bg) var(--dim, 0%));
+  stroke-width: var(--stroke-thin);
+  &.subregex { stroke: color-mix(in srgb, var(--c-subregex), var(--c-bg) var(--dim, 0%)); stroke-width: var(--stroke-medium); }
+}
+.tedge[data-has-ghost] {
+    stroke-dasharray: 5 4;
+}
+
+.tnode {
+  --bg: var(--c-node-bg);
+  --fg: var(--c-node-fg);
+  --stroke: var(--c-node-stroke);
+  cursor: pointer;
+
+  > :first-child {
+      stroke-width: var(--stroke-thin);
+      fill: color-mix(in srgb, var(--bg), var(--c-bg) var(--dim, 0%));
+      stroke: color-mix(in srgb, var(--stroke), var(--c-bg) var(--dim, 0%));
+  }
+  text {
+    font-size: var(--fs);
+    text-anchor: middle;
+    pointer-events: none;
+    fill: color-mix(in srgb, var(--fg), var(--c-bg) var(--dim, 0%));
+  }
+  .tlabel[data-part="name"] { font-family: var(--sans); }
+  .tlabel[data-part="arg"] { font-family: var(--mono); }
+
+  &[data-kind="Start"] { --bg: var(--c-start-bg); --fg: var(--c-start-fg); --stroke: var(--c-start-stroke); }
+  &[data-kind="Choice"] { --bg: var(--c-choice-bg); --fg: var(--c-choice-fg); --stroke: var(--c-choice-stroke); }
+  &[data-status="Match"] { --bg: var(--c-ok-bg); --fg: var(--c-ok-fg); --stroke: var(--c-ok-stroke); }
+  &[data-status="Mismatch"] { --bg: var(--c-fail-bg); --fg: var(--c-fail-fg); --stroke: var(--c-fail-stroke); }
+
+  &.subregex > :first-child { stroke: var(--c-subregex); stroke-width: var(--stroke-medium); }
+}
+
+#panes:not(:has(.tnode.hover)) .tnode.active > :first-child {
+  stroke: var(--c-ink);
+  stroke-width: var(--stroke-thick);
+}
+.tnode.hover > :first-child {
+  stroke: var(--c-subregex);
+  stroke-width: var(--stroke-thick);
+}
+#panes:has(.tnode.active) { /* Dim inactive nodes */
+  .tedge, .tnode:not(.active) {
+    --dim: 50%;
+    &.hover { --dim: 25%; }
+  }
+}
+
+footer {
+  font-size: smaller;
+  a {
+    color: var(--c-muted);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 640px) {
+  h1 { display: none; }
+  html { padding: 0; }
+  body { border-radius: 0; }
+  #panes {
+      flex-direction: column;
+      min-height: unset;
+  }
+  #tree {
+      min-height: 5lh;
+  }
+  #state {
+      flex-grow: 0;
+      min-height: 2lh;
+      max-height: 5lh;
+  }
+}
